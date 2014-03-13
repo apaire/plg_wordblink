@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="0.1" type="plugin" group="system">
+        <name>plg_wordblink</name>
+        <author>Anraud Paire</author>
+        <creationDate>Mars 2014</creationDate>
+        <copyright>All rights reserved.</copyright>
+        <license></license>
+        <authorEmail>apaire@gmail.com</authorEmail>
+        <authorUrl></authorUrl>
+        <version>0.1</version>
+        <description><h1>Plugin WordBlink</h1><p>To be used inside an article to display few words smoothly blinking one after the other.</p><p>Usage: {wordblink nbMots=2 mot1="toto" mot2="tutu" onDuration=1000 transitionDuration=1000}</p></description>
+        <files>
+                <filename plugin="Wordblink">plg_wordblink.php</filename>
+                <filename>index.html</filename>
+        </files>
+        <config>
+                <fields name="params">
+ 
+                        <fieldset name="basic">
+				<field name="plugincode" type="text" size= "40" default="wordblink" export='0' label="Plugin Code" description="Code that will be used and placed between curly braces to run the plugin" />
+                        </fieldset>
+ 
+                </fields>
+        </config>
+</extension>
