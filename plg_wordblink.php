@@ -126,7 +126,6 @@ class plgSystemPlg_wordblink extends JPlugin
 	 */
 	public function onAfterRender()
 	{
-	    return;
 		$this->event = 'onAfterRender';
 
 		$app = JFactory::getApplication();
@@ -169,13 +168,12 @@ class plgSystemPlg_wordblink extends JPlugin
 
 	function _replace(&$text) {
 		$matches = array();
-		$text=preg_replace("/&#0{0,2}39;/",'\'',$text);
-		preg_match_all($this->regex,$text,$matches,PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER);
+		$text=preg_replace("/&#0{0,2}39;/", '\'', $text);
+		preg_match_all($this->regex,$text, $matches, PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER);
 //		print_r($matches);
 		// Remove plugincode that are in head of the page
 		$matches = $this->_checkhead($text, $matches);
-		// Remove plugincode that are in the editor and textarea
-		$matches = $this->_checkeditorarea($text, $matches);
+
 		$cnt = count($matches[0]);
 //		print_r($matches);
 		if ($cnt>0) {
@@ -183,7 +181,7 @@ class plgSystemPlg_wordblink extends JPlugin
 				$filename = JPATH_SITE."/plugins/system/plg_wordblink/plg_wordblink_helper.php";
 
 				include_once($filename);
-				$this->helper = new plgSystemPlg_wordblink_helper($this->params, $this->regex, $this->document);
+				$this->helper = new plgSystemPlg_wordblink_helper($this->plugincode, $this->regex, $this->document);
 			}
 			// Process the found {mosmap} codes
 			for($counter = 0; $counter < $cnt; $counter++) {
@@ -197,7 +195,7 @@ class plgSystemPlg_wordblink extends JPlugin
 	}
 
 	function _checkhead($text, $plgmatches) {
-		$result = array(array(),array(),array(),array());
+		$result = array(array(), array(), array(), array());
 		$cnt = count($plgmatches[0]);
 		// Get head location
 		$end = stripos($text, '</head>');
@@ -213,74 +211,4 @@ class plgSystemPlg_wordblink extends JPlugin
 
 		return $result;
 	}
-
-	function _checkeditorarea($text, $plgmatches) {
-		$edmatches = array_merge($this->_getEditorPositions($text), $this->_getTextAreaPositions($text));
-		$result = array(array(),array(),array(),array());
-		if (count($edmatches)>0) {
-			$cnt = count($plgmatches[0]);
-			// check if match plugin is in match editor
-			for($counter = 0; $counter < $cnt; $counter++) {
-				$oke = true;
-				foreach ($edmatches as $ed) {
-					if ($plgmatches[0][$counter][1] > $ed['start']&&$plgmatches[0][$counter][1]< $ed['end'])
-						$oke= false;
-				}
-				if ($oke) {
-					$result[0][] = $plgmatches[0][$counter];
-					$result[1][] = $plgmatches[1][$counter];
-					$result[2][] = $plgmatches[2][$counter];
-					$result[3][] = $plgmatches[3][$counter];
-				}
-			}
-		} else
-			$result = $plgmatches;
-
-		// Clean up variables
-		unset($edmatches, $cnt, $counter, $ed);
-
-		return $result;
-	}
-
-	function _getEditorPositions($strBody) {
-		if (substr($this->jversion,0,3)=="1.5"||substr($this->jversion,0,3)=="1.6"||$this->jversion=="1.7.0"||$this->jversion=="1.7.1"||$this->jversion=="1.7.2")
-			preg_match_all("/<!-- Start Editor -->(.*)<!-- End Editor -->/Ums", $strBody, $strEditor, PREG_PATTERN_ORDER);
-		else
-			preg_match_all("/<div class=\"edit item-page\">(.*)<\/form>\n<\/div>/Ums", $strBody, $strEditor, PREG_PATTERN_ORDER);
-
-		$intOffset = 0;
-		$intIndex = 0;
-		$intEditorPositions = array();
-
-		foreach($strEditor[0] as $strFullEditor) {
-			$intEditorPositions[$intIndex] = array('start' => (strpos($strBody, $strFullEditor, $intOffset)), 'end' => (strpos($strBody, $strFullEditor, $intOffset) + strlen($strFullEditor)));
-			$intOffset += strlen($strFullEditor);
-			$intIndex++;
-		}
-
-		// Clean up variables
-		unset($strEditor, $intOffset, $strFullEditor, $intIndex);
-
-		return $intEditorPositions;
-	}
-
-	function _getTextAreaPositions($strBody) {
-		preg_match_all("/<textarea\b[^>]*>(.*)<\/textarea>/Ums", $strBody, $strTextArea, PREG_PATTERN_ORDER);
-
-		$intOffset = 0;
-		$intIndex = 0;
-		$intTextAreaPositions = array();
-
-		foreach($strTextArea[0] as $strFullTextArea) {
-			$intTextAreaPositions[$intIndex] = array('start' => (strpos($strBody, $strFullTextArea, $intOffset)), 'end' => (strpos($strBody, $strFullTextArea, $intOffset) + strlen($strFullTextArea)));
-			$intOffset += strlen($strFullTextArea);
-			$intIndex++;
-		}
-
-		// Clean up variables
-		unset($strTextArea, $intOffset, $strFullTextArea, $intIndex);
-
-		return $intTextAreaPositions;
-	}
-
 }

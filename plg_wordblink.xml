@@ -11,7 +11,9 @@
         <description><h1>Plugin WordBlink</h1><p>To be used inside an article to display few words smoothly blinking one after the other.</p><p>Usage: {wordblink nbMots=2 mot1="toto" mot2="tutu" onDuration=1000 transitionDuration=1000}</p></description>
         <files>
                 <filename plugin="plg_wordblink">plg_wordblink.php</filename>
+                <filename>plg_wordblink_helper.php</filename>
                 <filename>index.html</filename>
+		<folder>js</folder>
         </files>
         <config>
                 <fields name="params">
